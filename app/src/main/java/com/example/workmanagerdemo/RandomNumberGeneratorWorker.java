@@ -38,8 +38,6 @@ public class RandomNumberGeneratorWorker  extends Worker {
         this.context = context;
         this.workerParameters = workerParams;
         mIsRandomGeneratorOn = true;
-
-        //After click on notification, main activity should be open is pending.
     }
 
     @NonNull
@@ -73,7 +71,7 @@ public class RandomNumberGeneratorWorker  extends Worker {
     private ForegroundInfo createForeGroundInfo(){
         Notification notification = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        notification = getNotificationForOrio();
+        notification = getNotificationForOrio(MainActivity.class);
         else
             notification = getNotification(MainActivity.class,
                     "Randon Number",
@@ -84,12 +82,16 @@ public class RandomNumberGeneratorWorker  extends Worker {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private Notification getNotificationForOrio() {
+    private Notification getNotificationForOrio(Class targetNotificationActivity) {
         String NOTIFICATION_CHANNEL_ID = "com.example.simpleapp";
         String channelName = "My Background Service";
         NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
         chan.setLightColor(Color.BLUE);
         chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+        //Pending intent is used to open activity on notification click.
+        Intent intent = new Intent(context, targetNotificationActivity);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, intent, 0);
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         assert manager != null;
@@ -101,6 +103,7 @@ public class RandomNumberGeneratorWorker  extends Worker {
                 .setContentTitle("App is running in background")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
+                .setContentIntent(pendingIntent)
                 .build();
         return notification;
     }
