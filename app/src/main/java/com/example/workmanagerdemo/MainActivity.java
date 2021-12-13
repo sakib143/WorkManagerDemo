@@ -26,13 +26,14 @@ public class MainActivity extends AppCompatActivity {
 
         getIds();
         setListner();
-        setWorkManager();
     }
 
     private void setListner() {
         btnStartService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                workManager = WorkManager.getInstance(MainActivity.this);
+                workRequest = OneTimeWorkRequest.from(RandomNumberGeneratorWorker.class);
                 workManager.enqueue(workRequest);
                 mStopLoop = true;
             }
@@ -41,14 +42,11 @@ public class MainActivity extends AppCompatActivity {
         btnEndService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                workManager.cancelWorkById(workRequest.getId());
+                if(workManager != null) {
+                    workManager.cancelWorkById(workRequest.getId());
+                }
             }
         });
-    }
-
-    private void setWorkManager() {
-        workManager = WorkManager.getInstance(MainActivity.this);
-        workRequest = OneTimeWorkRequest.from(RandomNumberGeneratorWorker.class);
     }
 
     private void getIds() {
