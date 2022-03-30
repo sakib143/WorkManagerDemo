@@ -17,7 +17,7 @@ means we can add condition (contraints) for wifi availablity, sufficiean storage
 	    2. Periodic Work Request
 
 ## Worker
-We have to extend worker class which has two callback method.
+We have to extend Worker class which has two callback method.
 
 	1>doWork
 	2>onStopped
